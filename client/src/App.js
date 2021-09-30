@@ -1,24 +1,21 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
+  const [parks, setParks] = useState([])
+
+  useEffect(() => {
+    fetch("https://developer.nps.gov/api/v1/parks?parkCode=acad&api_key=jiubTrXhccHzfcEc6ihhjVV18MssQBvGoLrHNkQw")
+      .then((r) => r.json())
+      .then((data) => {
+        setParks(data.data);
+      });
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div> {parks.map((park) => park.fullName)}
+     
     </div>
+  
   );
 }
 
