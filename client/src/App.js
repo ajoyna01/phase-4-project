@@ -1,26 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import { Switch, Route } from "react-router-dom";
+import NavBar from "./NavBar";
+import Login from "./Login";
+import ParksPage from "./ParksPage";
 
 function App() {
-  const [parks, setParks] = useState([])
+  const [currentUser, setCurrentUser] = useState(null)
+  
 
   useEffect(() => {
-    fetch("https://developer.nps.gov/api/v1/parks?api_key=jiubTrXhccHzfcEc6ihhjVV18MssQBvGoLrHNkQw")
-      .then((r) => r.json())
-      .then((data) => {
-        setParks(data.data);
-        console.log(data.data)
-      });
-  }, []);
-  
-  
+    fetch('/me')
+      .then(res => {
+        if (res.ok) {
+          res.json().then((user) => {
+            setCurrentUser(user)
+          })
+        } 
+      })
+  }, [])
+
+  if(!currentUser)  return <Login onLogin={setCurrentUser}/>
   
   return (
-    <div> {parks.map((park) => park.fullName)}
-     
-    </div>
-  
-  );
+    <>
+    <NavBar className="NavBar" currentUser={currentUser} setCurrentUser={setCurrentUser} />
+    <main>
+      <Switch>
+      <Route path="/">
+        <ParksPage currentUser={currentUser} />
+      </Route>
+
+      </Switch>
+    </main>
+    </>
+  )
 }
 
 export default App;
