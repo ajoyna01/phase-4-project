@@ -1,38 +1,57 @@
+import { Switch, Route, BrowserRouter} from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import { Switch, Route } from "react-router-dom";
 import NavBar from "./NavBar";
-import Login from "./Login";
+import SignUpPage from "./SignUpPage";
 import ParksPage from "./ParksPage";
+import LogInPage from "./LogInPage";
+
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(null)
+  const [user, setUser] = useState(null);
   
 
   useEffect(() => {
-    fetch('/me')
-      .then(res => {
-        if (res.ok) {
-          res.json().then((user) => {
-            setCurrentUser(user)
-          })
-        } 
-      })
-  }, [])
+    // auto-login
+    fetch("/me").then((r) => {
+      if (r.ok) {
+        r.json().then((user) => setUser(user));
+      }
+    });
+  }, []);
 
-  if(!currentUser)  return <Login onLogin={setCurrentUser}/>
+  if (!user) return <LogInPage onLogin={setUser} />;
   
-  return (
-    <>
-    <NavBar className="NavBar" currentUser={currentUser} setCurrentUser={setCurrentUser} />
-    <main>
-      <Switch>
-      <Route path="/">
-        <ParksPage currentUser={currentUser} />
-      </Route>
+  return (<div>
 
-      </Switch>
-    </main>
-    </>
+
+
+
+
+
+<BrowserRouter>
+
+
+<NavBar user={user} setUser={setUser} />
+        <Switch>
+        
+
+        <Route path="/signup" >
+          <SignUpPage  />
+        </Route>
+
+        <Route path="/login" >
+          <LogInPage  />
+        </Route>
+
+        <Route path = "/">
+          <ParksPage  />
+        </Route>
+
+        </Switch>
+
+        </BrowserRouter></div>
+     
+    
   )
 }
 
